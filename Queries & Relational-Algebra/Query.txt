@@ -86,12 +86,10 @@ FROM Passenger P
 JOIN Booking B
     ON P.Passenger_ID = B.Passenger_ID
 WHERE B.Fare > 50;
-`
+
 
 
 -- Query 12: Count how many stations are in each city
-SELECT
-    City,
-    COUNT(Station_Code) AS Number_Of_Stations
+SELECT City, COUNT(Station_Code) AS Number_Of_Stations
 FROM Station
 GROUP BY City;
