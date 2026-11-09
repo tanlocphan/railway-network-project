@@ -27,14 +27,12 @@ JOIN Station_Connection SC
    AND T2.Station_Code = SC.To_Station
 GROUP BY T1.Train_ID;
 
-
 -- Query 4: Find which trains call at every station on the specified line
 SELECT Train_ID
 FROM Timetable
 WHERE Station_Code IN ('SGN', 'BHO', 'BTT', 'TCV', 'NTR')
 GROUP BY Train_ID
 HAVING COUNT(DISTINCT Station_Code) = 5;
-
 
 -- Query 5: Find passengers holding two bookings on the same date
 SELECT DISTINCT B1.Passenger_ID
@@ -44,19 +42,16 @@ JOIN Booking B2
    AND B1.Travel_Date = B2.Travel_Date
    AND B1.Booking_ID <> B2.Booking_ID;
 
-
 -- Query 6: List all express trains ordered by name
 SELECT *
 FROM Train
 WHERE Train_Type = 'Express'
 ORDER BY Train_Name ASC;
 
-
 -- Query 7: Find stations located in Hanoi city
 SELECT *
 FROM Station
 WHERE City = 'Hanoi';
-
 
 -- Query 8: Calculate the average fare for each train type
 SELECT
@@ -67,18 +62,15 @@ JOIN Booking B
     ON T.Train_ID = B.Train_ID
 GROUP BY T.Train_Type;
 
-
 -- Query 9: List all coaches of class 'sleeper' for train 'SE3'
 SELECT *
 FROM Coach
 WHERE Train_ID = 'SE3'
   AND Coach_Class LIKE '%Sleeper%';
 
-
 -- Query 10: Find the maximum track length between any two stations
 SELECT MAX(Length_km) AS Max_Track_Length
 FROM Station_Connection;
-
 
 -- Query 11: List passengers who have a booking with a fare greater than $50
 SELECT DISTINCT P.Passenger_Name
