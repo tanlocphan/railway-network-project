@@ -1,4 +1,4 @@
-QUERIES.SQL (Database query statements):
+-- QUERIES.SQL (Database query statements):
 -- Query 1: List every station where train SE7 stops, in the order it calls at them
 SELECT S.Station_Name
 FROM Station S
