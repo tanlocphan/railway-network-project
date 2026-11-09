@@ -1,0 +1,97 @@
+-- QUERIES.SQL (Database query statements):
+-- Query 1: List every station where train SE7 stops, in the order it calls at them
+SELECT S.Station_Name
+FROM Station S
+JOIN Timetable T
+    ON S.Station_Code = T.Station_Code
+WHERE T.Train_ID = 'SE7'
+ORDER BY T.Stop_No ASC;
+
+-- Query 2: Count how many trains depart from Saigon station between 06:00 and 12:00
+SELECT COUNT(Train_ID) AS Number_Of_Trains
+FROM Timetable
+WHERE Station_Code = 'SGN'
+  AND Departure >= '06:00:00'
+  AND Departure <= '12:00:00';
+
+-- Query 3: Calculate the total distance of each train's route
+SELECT
+    T1.Train_ID,
+    SUM(SC.Length_km) AS Total_Distance
+FROM Timetable T1
+JOIN Timetable T2
+    ON T1.Train_ID = T2.Train_ID
+   AND T1.Stop_No + 1 = T2.Stop_No
+JOIN Station_Connection SC
+    ON T1.Station_Code = SC.From_Station
+   AND T2.Station_Code = SC.To_Station
+GROUP BY T1.Train_ID;
+
+
+-- Query 4: Find which trains call at every station on the specified line
+SELECT Train_ID
+FROM Timetable
+WHERE Station_Code IN ('SGN', 'BHO', 'BTT', 'TCV', 'NTR')
+GROUP BY Train_ID
+HAVING COUNT(DISTINCT Station_Code) = 5;
+
+
+-- Query 5: Find passengers holding two bookings on the same date
+SELECT DISTINCT B1.Passenger_ID
+FROM Booking B1
+JOIN Booking B2
+    ON B1.Passenger_ID = B2.Passenger_ID
+   AND B1.Travel_Date = B2.Travel_Date
+   AND B1.Booking_ID <> B2.Booking_ID;
+
+
+-- Query 6: List all express trains ordered by name
+SELECT *
+FROM Train
+WHERE Train_Type = 'Express'
+ORDER BY Train_Name ASC;
+
+
+-- Query 7: Find stations located in Hanoi city
+SELECT *
+FROM Station
+WHERE City = 'Hanoi';
+
+
+-- Query 8: Calculate the average fare for each train type
+SELECT
+    T.Train_Type,
+    AVG(B.Fare) AS Average_Fare
+FROM Train T
+JOIN Booking B
+    ON T.Train_ID = B.Train_ID
+GROUP BY T.Train_Type;
+
+
+-- Query 9: List all coaches of class 'sleeper' for train 'SE3'
+SELECT *
+FROM Coach
+WHERE Train_ID = 'SE3'
+  AND Coach_Class LIKE '%Sleeper%';
+
+
+-- Query 10: Find the maximum track length between any two stations
+SELECT MAX(Length_km) AS Max_Track_Length
+FROM Station_Connection;
+
+
+-- Query 11: List passengers who have a booking with a fare greater than $50
+SELECT DISTINCT P.Passenger_Name
+FROM Passenger P
+JOIN Booking B
+    ON P.Passenger_ID = B.Passenger_ID
+WHERE B.Fare > 50;
+`
+
+
+-- Query 12: Count how many stations are in each city
+SELECT
+    City,
+    COUNT(Station_Code) AS Number_Of_Stations
+FROM Station
+GROUP BY City;

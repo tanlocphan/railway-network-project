@@ -1,4 +1,4 @@
-QUERIES.SQL (Database query statements):
+-- QUERIES.SQL (Database query statements):
 -- Query 1: List every station where train SE7 stops, in the order it calls at them
 SELECT S.Station_Name
 FROM Station S
@@ -86,12 +86,8 @@ FROM Passenger P
 JOIN Booking B
     ON P.Passenger_ID = B.Passenger_ID
 WHERE B.Fare > 50;
-`
-
 
 -- Query 12: Count how many stations are in each city
-SELECT
-    City,
-    COUNT(Station_Code) AS Number_Of_Stations
+SELECT City, COUNT(Station_Code) AS Number_Of_Stations
 FROM Station
 GROUP BY City;
