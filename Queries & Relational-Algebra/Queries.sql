@@ -14,7 +14,7 @@ WHERE Station_Code = 'SGN'
   AND Departure >= '06:00:00'
   AND Departure <= '12:00:00';
 
--- Query 3: Calculate the total distance of each train's route
+-- Query 3: For each train, the total distance of its route.
 SELECT
     T1.Train_ID,
     SUM(SC.Length_km) AS Total_Distance
@@ -27,7 +27,7 @@ JOIN Station_Connection SC
    AND T2.Station_Code = SC.To_Station
 GROUP BY T1.Train_ID;
 
--- Query 4: Find which trains call at every station on the specified line
+-- Query 4: Which trains call at every station on the Saigon–Nha Trang line?
 SELECT Train_ID
 FROM Timetable
 WHERE Station_Code IN ('SGN', 'BHO', 'BTT', 'TCV', 'NTR')
