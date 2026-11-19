@@ -1,0 +1,25 @@
+# Build output
+target/
+
+# Local settings - contains the MySQL password, never commit it
+config/connection.properties
+
+# Logs
+logs/
+*.log
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+nbproject/
+nbactions.xml
+
+# Contains team members personal data - keep local only
+docs/original/Project_Report.pdf
+
+# Railway Setup: this computer's MySQL choice and admin password - never commit it
+config/setup.properties

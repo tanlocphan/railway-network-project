@@ -1,0 +1,14 @@
+# Windows scripts need CRLF, shell scripts need LF
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+mvnw        text eol=lf
+*.sh        text eol=lf
+
+# Prebuilt files committed so a fresh clone works with one double-click
+*.jar       binary
+*.exe       binary
+*.ico       binary
+*.png       binary
+*.pdf       binary
+*.docx      binary
