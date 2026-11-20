@@ -1,0 +1,8 @@
+# Railway Network and Timetable - MySQL 8.0 connection settings
+# Copy this file to connection.properties (same folder) and fill in the password.
+# connection.properties is ignored by git so the password never leaves this computer.
+server.host=localhost
+server.port=3306
+server.database=RailwayManagement
+server.user=root
+server.password=

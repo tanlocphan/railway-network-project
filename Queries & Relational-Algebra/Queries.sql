@@ -41,7 +41,6 @@ WHERE Station_Code IN ('SGN', 'BHO', 'BTT', 'TCV', 'NTR')
 GROUP BY Train_ID
 HAVING COUNT(DISTINCT Station_Code) = 5;
 
-
 -- Query 5: Find passengers holding two bookings on the same date
 -- Self-Join + Multi-table Join
 SELECT DISTINCT P.Passenger_ID, P.Passenger_Name, B1.Travel_Date

@@ -1,9 +1,6 @@
 DROP DATABASE IF EXISTS RailwayManagement;  
-GO  
 CREATE DATABASE RailwayManagement;  
-GO  
 USE RailwayManagement;  
-GO  
    
 -- 1. Station  
 CREATE TABLE Station (  
@@ -12,11 +9,11 @@ CREATE TABLE Station (
     City VARCHAR(100) NOT NULL  
 );  
    
--- 2. Train  
+-- 2. Train 
 CREATE TABLE Train (  
     Train_ID VARCHAR(10) PRIMARY KEY,  
     Train_Name VARCHAR(100) NOT NULL,  
-    Train_Type VARCHAR(50) NOT NULL  
+    Train_Type VARCHAR(50) NOT NULL DEFAULT 'Express'  
 );  
    
 -- 3. Passenger  
@@ -47,7 +44,6 @@ CREATE TABLE Station_Connection (
     FOREIGN KEY (To_Station) REFERENCES Station(Station_Code)  
         ON DELETE NO ACTION   
         ON UPDATE CASCADE,  
-    CONSTRAINT chk_track_diff CHECK (From_Station <> To_Station),  
     CONSTRAINT chk_track_length CHECK (Length_km > 0),  
     CONSTRAINT uq_track_pair UNIQUE (From_Station, To_Station)  
 );  
@@ -71,11 +67,11 @@ CREATE TABLE Timetable (
     CONSTRAINT uq_train_station UNIQUE (Train_ID, Station_Code)  
 );  
    
--- 6. Coach  
+-- 6. Coach 
 CREATE TABLE Coach (  
     Train_ID VARCHAR(10) NOT NULL,  
     C_ID VARCHAR(10) NOT NULL,  
-    Coach_Class VARCHAR(50) NOT NULL,  
+    Coach_Class VARCHAR(50) NOT NULL DEFAULT 'Soft Seat AC',  
     PRIMARY KEY (Train_ID, C_ID),  
     FOREIGN KEY (Train_ID) REFERENCES Train(Train_ID)   
         ON DELETE CASCADE   
@@ -93,7 +89,7 @@ CREATE TABLE Seat (
         ON UPDATE CASCADE  
 );  
    
--- 8. Booking  
+-- 8. Booking
 CREATE TABLE Booking (  
     Booking_ID VARCHAR(10) PRIMARY KEY,  
     Passenger_ID VARCHAR(10) NOT NULL,  
@@ -101,7 +97,7 @@ CREATE TABLE Booking (
     Travel_Date DATE NOT NULL,  
     C_ID VARCHAR(10) NOT NULL,  
     S_ID VARCHAR(10) NOT NULL,  
-    Fare DECIMAL(12,2) NOT NULL,  
+    Fare DECIMAL(12,2) NOT NULL DEFAULT 0.00,  
     FOREIGN KEY (Passenger_ID) REFERENCES Passenger(Passenger_ID)   
         ON DELETE NO ACTION   
         ON UPDATE CASCADE,  
@@ -114,7 +110,7 @@ CREATE TABLE Booking (
   
   
 -- ==========================================  
--- 1. Station  
+-- CHÈN DỮ LIỆU MẪU
 -- ==========================================  
 INSERT INTO Station (Station_Code, Station_Name, City) VALUES   
 ('SGN', 'Saigon Station', 'Ho Chi Minh City'),  
@@ -143,9 +139,6 @@ INSERT INTO Station (Station_Code, Station_Name, City) VALUES
 ('LSN', 'Lang Son Station', 'Lang Son'),  
 ('DDG', 'Dong Dang Station', 'Lang Son');  
    
--- ==========================================  
--- 2. Train  
--- ==========================================  
 INSERT INTO Train (Train_ID, Train_Name, Train_Type) VALUES   
 ('SE1', 'Reunification Express SE1', 'Express'),  
 ('SE2', 'Reunification Express SE2', 'Express'),  
@@ -173,9 +166,6 @@ INSERT INTO Train (Train_ID, Train_Name, Train_Type) VALUES
 ('QT1', 'Hanoi - Quan Trieu 1', 'Local'),  
 ('VD1', 'Vinh - Da Nang 1', 'Local');  
    
--- ==========================================  
--- 3. Passenger  
--- ==========================================  
 INSERT INTO Passenger (Passenger_ID, Passenger_Name) VALUES   
 ('P001', 'Nguyen Van An'),  
 ('P002', 'Tran Thi Binh'),  
@@ -203,9 +193,6 @@ INSERT INTO Passenger (Passenger_ID, Passenger_Name) VALUES
 ('P024', 'Do Van Dai'),  
 ('P025', 'Ton Thi Bao');  
   
--- ==========================================  
--- 3b. Passenger Phone  
--- ==========================================  
 INSERT INTO Passenger_Phone (Passenger_ID, Phone_Number) VALUES  
 ('P001', '0901234567'),  
 ('P001', '0909998881'),  
@@ -238,9 +225,6 @@ INSERT INTO Passenger_Phone (Passenger_ID, Phone_Number) VALUES
 ('P024', '0734567890'),  
 ('P025', '0745678901');  
    
--- ==========================================  
--- 4. Station_Connection  
--- ==========================================  
 INSERT INTO Station_Connection (Track_ID, From_Station, To_Station, Length_km) VALUES   
 ('TS01', 'SGN', 'BHO', 29),  
 ('TS02', 'BHO', 'BTT', 146),  
@@ -268,46 +252,32 @@ INSERT INTO Station_Connection (Track_ID, From_Station, To_Station, Length_km) V
 ('TS24', 'GLA', 'LSN', 149),  
 ('TS25', 'LSN', 'DDG', 14);  
    
--- ==========================================  
--- 5. Timetable  
--- ==========================================  
--- Train SE1 schedule (Southbound)  
 INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALUES   
 ('SE1', 1, 'HNO', NULL, '06:00:00'),  
 ('SE1', 2, 'NAM', '07:30:00', '07:35:00'),  
 ('SE1', 3, 'THA', '09:00:00', '09:05:00'),  
 ('SE1', 4, 'VIN', '11:30:00', '11:40:00'),  
-('SE1', 5, 'DNG', '18:00:00', '18:15:00');  
--- Train SE2 schedule (Northbound)  
-INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALUES   
+('SE1', 5, 'DNG', '18:00:00', '18:15:00'),
 ('SE2', 1, 'SGN', NULL, '06:00:00'),  
 ('SE2', 2, 'NTR', '13:00:00', '13:10:00'),  
 ('SE2', 3, 'DNG', '22:00:00', '22:15:00'),  
 ('SE2', 4, 'VIN', '05:00:00', '05:10:00'),  
-('SE2', 5, 'HNO', '11:00:00', NULL);  
--- Train SNT1 schedule  
-INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALUES   
+('SE2', 5, 'HNO', '11:00:00', NULL),
 ('SNT1', 1, 'SGN', NULL, '20:00:00'),  
 ('SNT1', 2, 'BHO', '20:40:00', '20:45:00'),  
 ('SNT1', 3, 'BTT', '23:30:00', '23:35:00'),  
 ('SNT1', 4, 'TCV', '02:00:00', '02:05:00'),  
-('SNT1', 5, 'NTR', '04:30:00', NULL);  
--- Train SPT1 schedule  
-INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALUES   
+('SNT1', 5, 'NTR', '04:30:00', NULL),
 ('SPT1', 1, 'SGN', NULL, '06:40:00'),  
 ('SPT1', 2, 'BHO', '07:25:00', '07:30:00'),  
-('SPT1', 3, 'PTT', '10:30:00', NULL);  
--- Train SP1 schedule  
-INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALUES   
+('SPT1', 3, 'PTT', '10:30:00', NULL),
 ('SP1', 1, 'HNO', NULL, '21:30:00'),  
 ('SP1', 2, 'LBE', '21:40:00', '21:45:00'),  
 ('SP1', 3, 'VTR', '23:00:00', '23:05:00'),  
 ('SP1', 4, 'YBA', '01:00:00', '01:10:00'),  
 ('SP1', 5, 'LCI', '05:30:00', NULL),  
 ('HP1', 1, 'HNO', NULL, '06:00:00'),  
-('HP1', 2, 'HPH', '08:30:00', NULL);  
- --Train SE7 schedule  
-INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALUES  
+('HP1', 2, 'HPH', '08:30:00', NULL),
 ('SE7', 1, 'HNO', NULL, '06:00:00'),  
 ('SE7', 2, 'NAM', '07:30:00', '07:35:00'),   
 ('SE7', 3, 'THA', '09:00:00', '09:05:00'),  
@@ -315,44 +285,33 @@ INSERT INTO Timetable (Train_ID, Stop_No, Station_Code, Arrival, Departure) VALU
 ('SE7', 5, 'DNG', '18:00:00', '18:15:00'),  
 ('SE7', 6, 'SGN', '08:00:00', NULL);  
    
--- ==========================================  
--- 6. Coach  
--- ==========================================  
--- Allocate 5 coaches for each of 5 trains  
 INSERT INTO Coach (Train_ID, C_ID, Coach_Class) VALUES   
 ('SE1', 'C01', 'Soft Seat AC'),  
 ('SE1', 'C02', 'Soft Seat AC'),  
 ('SE1', 'C03', 'Sleeper 6-berth'),  
 ('SE1', 'C04', 'Sleeper 4-berth'),  
 ('SE1', 'C05', 'VIP Sleeper 2-berth'),  
-   
 ('SE2', 'C01', 'Hard Seat'),  
 ('SE2', 'C02', 'Soft Seat AC'),  
 ('SE2', 'C03', 'Sleeper 6-berth'),  
 ('SE2', 'C04', 'Sleeper 4-berth'),  
 ('SE2', 'C05', 'VIP Sleeper 2-berth'),  
-   
 ('SNT1', 'C01', 'Soft Seat AC'),  
 ('SNT1', 'C02', 'Soft Seat AC'),  
 ('SNT1', 'C03', 'Sleeper 4-berth'),  
 ('SNT1', 'C04', 'Sleeper 4-berth'),  
 ('SNT1', 'C05', 'Sleeper 4-berth'),  
-   
 ('SPT1', 'C01', 'Hard Seat'),  
 ('SPT1', 'C02', 'Soft Seat AC'),  
 ('SPT1', 'C03', 'Soft Seat AC'),  
 ('SPT1', 'C04', 'Soft Seat AC'),  
 ('SPT1', 'C05', 'Soft Seat AC'),  
-   
 ('SP1', 'C01', 'Soft Seat AC'),  
 ('SP1', 'C02', 'Sleeper 4-berth'),  
 ('SP1', 'C03', 'Sleeper 4-berth'),  
 ('SP1', 'C04', 'Sleeper 4-berth'),  
 ('SP1', 'C05', 'VIP Sleeper 2-berth');  
    
--- ==========================================  
--- 7. Seat  
--- ==========================================  
 INSERT INTO Seat (Train_ID, C_ID, S_ID) VALUES   
 ('SE1', 'C01', 'S01'), ('SE1', 'C01', 'S02'), ('SE1', 'C01', 'S03'), ('SE1', 'C01', 'S04'), ('SE1', 'C01', 'S05'),  
 ('SE2', 'C02', 'S01'), ('SE2', 'C02', 'S02'), ('SE2', 'C02', 'S03'), ('SE2', 'C02', 'S04'), ('SE2', 'C02', 'S05'),  
@@ -360,41 +319,96 @@ INSERT INTO Seat (Train_ID, C_ID, S_ID) VALUES
 ('SPT1', 'C02', 'S01'), ('SPT1', 'C02', 'S02'), ('SPT1', 'C02', 'S03'), ('SPT1', 'C02', 'S04'), ('SPT1', 'C02', 'S05'),  
 ('SP1', 'C02', 'B01'), ('SP1', 'C02', 'B02'), ('SP1', 'C02', 'B03'), ('SP1', 'C02', 'B04'), ('SP1', 'C05', 'V01');  
    
--- ==========================================  
--- 8. Booking  
--- ==========================================  
-INSERT INTO Booking (Booking_ID, Passenger_ID, Train_ID, Travel_Date, C_ID, S_ID, Fare) VALUES   
+INSERT IGNORE INTO Booking (Booking_ID, Passenger_ID, Train_ID, Travel_Date, C_ID, S_ID, Fare) VALUES   
 ('BKG0001', 'P001', 'SE1', '2026-10-15', 'C01', 'S01', 550000.00),  
 ('BKG0002', 'P001', 'SE1', '2026-10-15', 'C01', 'S02', 550000.00),  
 ('BKG0003', 'P002', 'SE1', '2026-10-15', 'C01', 'S03', 550000.00),   
 ('BKG0004', 'P003', 'SE1', '2026-10-15', 'C01', 'S04', 550000.00),   
 ('BKG0005', 'P004', 'SE1', '2026-10-15', 'C01', 'S05', 550000.00),   
-    
 ('BKG0006', 'P005', 'SE2', '2026-10-16', 'C02', 'S01', 600000.00),   
 ('BKG0007', 'P006', 'SE2', '2026-10-16', 'C02', 'S02', 600000.00),   
 ('BKG0008', 'P007', 'SE2', '2026-10-16', 'C02', 'S03', 600000.00),   
 ('BKG0009', 'P008', 'SE2', '2026-10-16', 'C02', 'S04', 600000.00),   
 ('BKG0010', 'P009', 'SE2', '2026-10-16', 'C02', 'S05', 600000.00),   
-    
 ('BKG0011', 'P010', 'SNT1', '2026-10-17', 'C03', 'B01', 450000.00),   
 ('BKG0012', 'P011', 'SNT1', '2026-10-17', 'C03', 'B02', 450000.00),   
 ('BKG0013', 'P012', 'SNT1', '2026-10-17', 'C03', 'B03', 400000.00),   
 ('BKG0014', 'P013', 'SNT1', '2026-10-17', 'C03', 'B04', 400000.00),   
 ('BKG0015', 'P014', 'SNT1', '2026-10-17', 'C04', 'B01', 450000.00),   
-    
 ('BKG0016', 'P015', 'SPT1', '2026-10-18', 'C02', 'S01', 180000.00),   
 ('BKG0017', 'P016', 'SPT1', '2026-10-18', 'C02', 'S02', 180000.00),   
 ('BKG0018', 'P017', 'SPT1', '2026-10-18', 'C02', 'S03', 180000.00),   
 ('BKG0019', 'P018', 'SPT1', '2026-10-18', 'C02', 'S04', 180000.00),   
 ('BKG0020', 'P019', 'SPT1', '2026-10-18', 'C02', 'S05', 180000.00),   
-    
 ('BKG0021', 'P020', 'SP1', '2026-10-19', 'C02', 'B01', 750000.00),   
 ('BKG0022', 'P021', 'SP1', '2026-10-19', 'C02', 'B02', 750000.00),   
 ('BKG0023', 'P022', 'SP1', '2026-10-19', 'C02', 'B03', 700000.00),   
 ('BKG0024', 'P023', 'SP1', '2026-10-19', 'C02', 'B04', 700000.00),   
 ('BKG0025', 'P024', 'SP1', '2026-10-19', 'C05', 'V01', 1200000.00);  
   
+-- ==========================================  
+-- KHỞI TẠO FUNCTION VÀ KIỂM THỬ
+-- ==========================================  
+DROP FUNCTION IF EXISTS fn_get_passenger_fare;
+
+DELIMITER $$
+
+CREATE FUNCTION fn_get_passenger_fare(
+    p_passenger_id VARCHAR(10),
+    p_date DATE
+)
+RETURNS DECIMAL(12,2)
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_fare DECIMAL(12,2) DEFAULT NULL;
+
+    SELECT Fare INTO v_fare
+    FROM Booking
+    WHERE Passenger_ID = p_passenger_id
+      AND Travel_Date = p_date
+    ORDER BY Booking_ID DESC
+    LIMIT 1;
+
+    RETURN v_fare;
+END$$
+
+DELIMITER ;
+
 SELECT * FROM Station;  
 SELECT * FROM Train;  
 SELECT * FROM Passenger_Phone; 
- 
+DROP FUNCTION IF EXISTS fn_get_passenger_fare;
+
+DELIMITER $$
+
+CREATE FUNCTION fn_get_passenger_fare(
+    p_passenger_id VARCHAR(10),
+    p_date DATE
+)
+RETURNS DECIMAL(12,2)
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_fare DECIMAL(12,2) DEFAULT NULL;
+
+    SELECT Fare INTO v_fare
+    FROM Booking
+    WHERE Passenger_ID = p_passenger_id
+      AND Travel_Date = p_date
+    ORDER BY Booking_ID DESC
+    LIMIT 1;
+
+    RETURN v_fare;
+END$$
+
+DELIMITER ;
+
+
+INSERT IGNORE INTO Coach (Train_ID, C_ID, Coach_Class) VALUES ('SE1', 'C01', 'VIP');
+INSERT IGNORE INTO Seat (Train_ID, C_ID, S_ID) VALUES ('SE1', 'C01', 'S01');
+
+INSERT IGNORE INTO Booking (Booking_ID, Passenger_ID, Train_ID, Travel_Date, C_ID, S_ID, Fare) 
+VALUES ('B001', 'P001', 'SE1', '2026-12-01', 'C01', 'S01', 500.00);
+
+SELECT fn_get_passenger_fare('P001', '2026-12-01') AS 'Passenger_Ticket_Price';
